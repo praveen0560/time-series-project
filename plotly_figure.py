@@ -16,10 +16,10 @@ def plotly_table(dataframe):
             align='center',
             font=dict(color='white', size=15),
             height=35
-        ), # Added this comma
+        ), 
         cells=dict(
             values=[["<b>"+str(i)+"</b>" for i in dataframe.index]] + [dataframe[i] for i in dataframe.columns],
-            fill_color=[[rowOddColor, rowEvenColor] * len(dataframe)], # Added comma
+            fill_color=[[rowOddColor, rowEvenColor] * len(dataframe)],
             align='left',
             line_color='white',
             font=dict(color="black", size=15)
@@ -91,15 +91,15 @@ def candlestick(dataframe, num_period):
     return fig # Added this line
 
 def RSI(dataframe, num_period):
-    # 1. Calculate RSI (Ensure pta/pandas_ta is imported as pta)
+   
     dataframe['RSI'] = pta.rsi(dataframe['Close'])
     
-    # 2. Filter data (Fixed typo: fliter -> filter)
+   
     dataframe = fliter_data(dataframe, num_period)
     
     fig = go.Figure()
     
-    # RSI Line
+    
     fig.add_trace(go.Scatter(
         x=dataframe.index, # Using index is safer for yfinance dates
         y=dataframe['RSI'], 
@@ -108,7 +108,7 @@ def RSI(dataframe, num_period):
         line=dict(width=2, color='orange'),
     ))
     
-    # Overbought Line (70)
+    
     fig.add_trace(go.Scatter(
         x=dataframe.index,
         y=[70]*len(dataframe), 
@@ -117,7 +117,7 @@ def RSI(dataframe, num_period):
         line=dict(width=2, color='red', dash='dash'),
     ))
     
-    # Oversold Line (30) - Fixed the extra quote here
+   
     fig.add_trace(go.Scatter(
         x=dataframe.index,
         y=[30]*len(dataframe), 
@@ -138,16 +138,16 @@ def RSI(dataframe, num_period):
     
 
 def Moving_average(dataframe, num_period):
-    # 1. Calculate Simple Moving Average
+   
     dataframe['SMA_50'] = pta.sma(dataframe['Close'], length=50)
     
-    # 2. Fix typo: filter_data (not fliter_data)
+    
     dataframe = fliter_data(dataframe, num_period)
     
     fig = go.Figure()
 
-    # Use dataframe.index if your dates are in the index (standard for yfinance)
-    # If you have a column named 'Date', keep x=dataframe['Date']
+   
+     x=dataframe['Date']
     x_axis = dataframe.index 
 
     fig.add_trace(go.Scatter(x=x_axis, y=dataframe['Open'],
@@ -183,18 +183,18 @@ def Moving_average(dataframe, num_period):
     return fig
 
 def MACD(dataframe, num_period):
-    # 1. Calculate MACD
+    
     macd_data = pta.macd(dataframe['Close'])
     dataframe['MACD'] = macd_data.iloc[:, 0]
     dataframe['MACD_Signal'] = macd_data.iloc[:, 1]
     dataframe['MACD_Hist'] = macd_data.iloc[:, 2]
 
-    # 2. Filter data (Fixed typo: filter_data)
+    
     dataframe = fliter_data(dataframe, num_period)
     
     fig = go.Figure()
 
-    # 3. Add MACD Line
+    
     fig.add_trace(go.Scatter(
         x=dataframe.index,
         y=dataframe['MACD'], 
@@ -202,7 +202,7 @@ def MACD(dataframe, num_period):
         line=dict(width=2, color='blue')
     ))
 
-    # 4. Add Signal Line
+    
     fig.add_trace(go.Scatter(
         x=dataframe.index,
         y=dataframe['MACD_Signal'], 
@@ -210,7 +210,7 @@ def MACD(dataframe, num_period):
         line=dict(width=2, color='orange', dash='dot')
     ))
 
-    # 5. Add Histogram (Green for positive, Red for negative)
+   
     colors = ['green' if val >= 0 else 'red' for val in dataframe['MACD_Hist']]
     fig.add_trace(go.Bar(
         x=dataframe.index,
@@ -239,7 +239,7 @@ def MACD(dataframe, num_period):
 def Moving_average_forecast(forecast):
     fig = go.Figure()
 
-    # Only plotting the future/predicted section (last 31 points)
+   
     fig.add_trace(go.Scatter(
         x=forecast.index[-31:], 
         y=forecast['Close'].iloc[-31:],
@@ -248,7 +248,7 @@ def Moving_average_forecast(forecast):
         line=dict(width=3, color='red') # Increased width for visibility
     ))
 
-    # Layout settings
+   
     fig.update_xaxes(rangeslider_visible=True)
     fig.update_layout(
         height=500, 
